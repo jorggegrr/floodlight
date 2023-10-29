@@ -1,5 +1,7 @@
 package net.floodlightcontroller.statistics;
 
+import net.floodlightcontroller.core.module.FloodlightModuleContext;
+import net.floodlightcontroller.core.module.IFloodlightService;
 import java.lang.Thread.State;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,6 +57,9 @@ import net.floodlightcontroller.util.Pair;
 
 public class StatisticsCollector implements IFloodlightModule, IStatisticsService {
 	private static final Logger log = LoggerFactory.getLogger(StatisticsCollector.class);
+
+	private int PortTxThreshold;
+	private int PortRxThreshold;
 
 	private static IOFSwitchService switchService;
 	private static IThreadPoolService threadPoolService;
@@ -349,6 +354,29 @@ public class StatisticsCollector implements IFloodlightModule, IStatisticsServic
 			}
 		}
 		log.info("Port statistics collection interval set to {}s", portStatsInterval);
+
+		//
+		Map<String, String> configParameters = context.getConfigParams(this);
+		PortTxThreshold = Integer.parseInt(configParameters.get("PortTxThreshold"));
+		PortRxThreshold = Integer.parseInt(configParameters.get("PortRxThreshold"));
+
+	}
+
+	public int getPortTxThreshold() {
+		return PortTxThreshold;
+	}
+
+	public int getPortRxThreshold() {
+		return PortRxThreshold;
+	}
+	//comparar los valores de bandwidth con los umbrales E imprimir un mensaje
+	public void checkThresholds(int portTx, int portRx) {
+		if (portTx > PortTxThreshold) {
+			System.out.println("El valor de TX (" + portTx + ") ha superado el umbral de PortTxThreshold (" + PortTxThreshold + ")");
+		}
+		if (portRx > PortRxThreshold) {
+			System.out.println("El valor de RX (" + portRx + ") ha superado el umbral de PortRxThreshold (" + PortRxThreshold + ")");
+		}
 	}
 
 	@Override

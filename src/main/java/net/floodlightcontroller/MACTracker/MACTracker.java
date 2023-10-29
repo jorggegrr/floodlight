@@ -68,17 +68,6 @@ public class MACTracker implements IOFMessageListener, IFloodlightModule {
         return Command.CONTINUE;
     }
 
-    @Override
-    public boolean isCallbackOrderingPrereq(OFType type, String name) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean isCallbackOrderingPostreq(OFType type, String name) {
-        // TODO Auto-generated method stub
-        return false;
-    }
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
@@ -91,6 +80,21 @@ public class MACTracker implements IOFMessageListener, IFloodlightModule {
         // TODO Auto-generated method stub
         return null;
     }
+
+    @Override
+    public boolean isCallbackOrderingPrereq(OFType type, String name) {
+        if (type.equals(OFType.PACKET_IN) && name.equals("Forwarding")) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isCallbackOrderingPostreq(OFType type, String name) {
+        // No hay postrequisitos específicos para este módulo
+        return false;
+    }
+
 
 
 
